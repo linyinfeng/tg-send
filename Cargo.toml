@@ -3,6 +3,7 @@ name = "tg-send"
 authors = [ "Lin Yinfeng <lin.yinfeng@outlook.com>" ]
 version = "0.1.0"
 edition = "2021"
+license-file = "LICENSE"
 description = """
 A simple cli sending telegram messages
 """
