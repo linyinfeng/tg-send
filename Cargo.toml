@@ -1,0 +1,19 @@
+[package]
+name = "tg-send"
+authors = [ "Lin Yinfeng <lin.yinfeng@outlook.com>" ]
+version = "0.1.0"
+edition = "2021"
+description = """
+A simple cli sending telegram messages
+"""
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+teloxide = "*"
+tokio = { version = "*", features = [ "macros", "rt-multi-thread" ] }
+log = "*"
+pretty_env_logger = "*"
+thiserror = "*"
+clap = { version = "*", features = [ "cargo", "derive" ] }
+serde_json = "*"
