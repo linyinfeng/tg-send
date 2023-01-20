@@ -1,7 +1,12 @@
 use std::process::exit;
 
 use clap::{Parser, ValueEnum};
-use teloxide::{Bot, types::{ChatId, ParseMode, Message}, requests::Requester, payloads::SendMessageSetters};
+use teloxide::{
+    payloads::SendMessageSetters,
+    requests::Requester,
+    types::{ChatId, Message, ParseMode},
+    Bot,
+};
 
 #[tokio::main]
 async fn main() {
@@ -14,9 +19,15 @@ async fn run() {
     let options = Options::parse();
 
     match send_message(bot, &options).await.and_then(format_msg) {
-        Ok(m) => if !options.silent { println!("{m}"); }
+        Ok(m) => {
+            if !options.silent {
+                println!("{m}");
+            }
+        }
         Err(e) => {
-            if !options.silent { log::error!("{e}"); }
+            if !options.silent {
+                log::error!("{e}");
+            }
             exit(1);
         }
     }
@@ -56,9 +67,7 @@ pub enum MessageType {
 }
 
 fn parse_chat_id(s: &str) -> Result<ChatId, String> {
-    let num = s
-        .parse()
-        .map_err(|_| format!("`{s}` isn't a chat id"))?;
+    let num = s.parse().map_err(|_| format!("`{s}` isn't a chat id"))?;
     Ok(ChatId(num))
 }
 
