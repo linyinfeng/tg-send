@@ -58,7 +58,7 @@ pub enum MessageType {
 fn parse_chat_id(s: &str) -> Result<ChatId, String> {
     let num = s
         .parse()
-        .map_err(|_| format!("`{}` isn't a chat id", s))?;
+        .map_err(|_| format!("`{s}` isn't a chat id"))?;
     Ok(ChatId(num))
 }
 
