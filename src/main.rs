@@ -1,4 +1,7 @@
-use std::process::exit;
+use std::{
+    io::{self, Read},
+    process::exit,
+};
 
 use clap::{Parser, ValueEnum};
 use teloxide::{
@@ -18,7 +21,7 @@ async fn run() {
     let bot = Bot::from_env();
     let options = Options::parse();
 
-    match send_message(bot, &options).await.and_then(format_msg) {
+    match read_send_format(bot, &options).await {
         Ok(m) => {
             if !options.silent {
                 println!("{m}");
@@ -33,8 +36,14 @@ async fn run() {
     }
 }
 
-async fn send_message(bot: Bot, options: &Options) -> Result<Message, Error> {
-    let send = bot.send_message(options.chat_id, &options.message);
+async fn read_send_format(bot: Bot, options: &Options) -> Result<String, Error> {
+    let mut msg = String::new();
+    io::stdin().read_to_string(&mut msg)?;
+    send_message(bot, options, msg).await.and_then(format_msg)
+}
+
+async fn send_message(bot: Bot, options: &Options, msg: String) -> Result<Message, Error> {
+    let send = bot.send_message(options.chat_id, msg);
     let send = match options.message_type {
         MessageType::PlainText => send,
         MessageType::Markdown => send.parse_mode(ParseMode::MarkdownV2),
@@ -50,7 +59,6 @@ fn format_msg(msg: Message) -> Result<String, Error> {
 #[derive(Debug, Parser)]
 #[command(author, version, about)]
 pub struct Options {
-    pub message: String,
     #[arg(short, long, value_parser = parse_chat_id)]
     pub chat_id: ChatId,
     #[arg(short, long, value_enum, default_value = "plain-text")]
@@ -77,6 +85,8 @@ pub enum Error {
     RequestError(#[from] teloxide::RequestError),
     #[error("serde error: {0}")]
     SerdeError(#[from] serde_json::Error),
+    #[error("io error: {0}")]
+    IoError(#[from] io::Error),
 }
 
 #[cfg(test)]
